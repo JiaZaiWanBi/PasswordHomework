@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>作业</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+        }
+        nav {
+            text-align: center;
+            height: 50px;
+        }
+        nav ul {
+            list-style-type: none;
+            padding: 0;
+        }
+        nav ul li {
+            display: inline-block;
+            margin-right: 20px;
+            cursor: pointer;
+            border-radius: 20px; /* 设置圆角 */
+            padding: 10px 20px; /* 增加内边距 */
+        }
+        iframe {
+            width: 900px;
+            height: 550px;
+            border: none;
+            margin: auto;
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <ul>
+        <li id="nav1" onclick="changeIframe('iframe1')">棋盘</li>
+        <li id="nav2" onclick="changeIframe('iframe2')">栏棚</li>
+        <li id="nav3" onclick="changeIframe('iframe3')">凯撒</li>
+    </ul>
+</nav>
+
+<iframe id="iframe" src="qipan.html" frameborder="0"></iframe>
+
+<script>
+
+setActiveNav("nav1")
+
+    function changeIframe(iframeId) {
+        var iframeSrc = '';
+        switch (iframeId) {
+            case 'iframe1':
+                iframeSrc = 'qipan.html';
+                setActiveNav('nav1');
+                break;
+            case 'iframe2':
+                iframeSrc = 'lanpeng.html';
+                setActiveNav('nav2');
+                break;
+            case 'iframe3':
+                iframeSrc = 'kaisa.html';
+                setActiveNav('nav3');
+                break;
+        }
+        document.getElementById("iframe").src = iframeSrc;
+    }
+    function setActiveNav(navItemId) {
+        var navItems = document.querySelectorAll('nav ul li');
+        navItems.forEach(function(item) {
+            item.style.backgroundColor = ''; // 清除所有li的背景色
+        });
+        document.getElementById(navItemId).style.backgroundColor = '#007bff'; // 设置选中li的背景色为蓝色
+    }
+</script>
+
+</body>
+</html>

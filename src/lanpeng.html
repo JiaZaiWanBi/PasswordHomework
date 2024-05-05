@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>美化输入框和按钮</title>
+    <style>
+        /* 样式化输入框 */
+        .rounded-input {
+            border: 2px solid #ccc; /* 边框 */
+            border-radius: 10px; /* 圆角 */
+            padding: 10px; /* 内边距 */
+            font-size: 16px; /* 字体大小 */
+            outline: none; /* 删除默认的轮廓样式 */
+        }
+
+        /* 鼠标悬停时改变输入框颜色 */
+        .rounded-input:hover {
+            border-color: #aaa;
+        }
+
+        /* 聚焦时改变输入框颜色 */
+        .rounded-input:focus {
+            border-color: #007bff;
+        }
+
+        /* 共同的容器样式 */
+        .container {
+            display: flex;
+            flex-direction: row; /* 将子元素在水平方向上排列 */
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        /* 输入框样式 */
+        textarea {
+            width: 800px;
+            height: 200px;
+            margin-bottom: 20px;
+            resize: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box; /* 让 padding 不会撑大输入框 */
+        }
+
+        /* 按钮样式 */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 20px; /* 设置圆角 */
+            padding: 10px 20px; /* 增加内边距 */
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px; /* 设置按钮之间的右边距 */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <textarea id="before" style="width: 800px;"></textarea>
+    <div>
+    <input id="m" class="rounded-input" placeholder="请输入m">
+    <button id="jiami" style="display: inline-block;" onclick="jiami()">👇加密</button>
+    <button id="jiemi" style="display: inline-block;" onclick="jiemi()">👆解密</button>
+    </div>
+    <textarea id="after" style="width: 800px"></textarea>
+</div>
+<script>
+
+function railFenceEncrypt(plainText, rails) {
+    const fence = new Array(rails);
+    for (let i = 0; i < rails; i++) {
+        fence[i] = new Array(plainText.length).fill('.');
+    }
+
+    let rail = 0;
+    let direction = 'down';
+    for (let i = 0; i < plainText.length; i++) {
+        fence[rail][i] = plainText[i];
+        if (rail === 0) {
+            direction = 'down';
+        } else if (rail === rails - 1) {
+            direction = 'up';
+        }
+        direction === 'down' ? rail++ : rail--;
+    }
+
+    let cipherText = '';
+    for (let i = 0; i < rails; i++) {
+        for (let j = 0; j < plainText.length; j++) {
+            if (fence[i][j] !== '.') {
+                cipherText += fence[i][j];
+            }
+        }
+    }
+
+    return cipherText;
+}
+
+// 棚栏密码解密函数
+function railFenceDecrypt(cipherText, rails) {
+    const fence = new Array(rails);
+    for (let i = 0; i < rails; i++) {
+        fence[i] = new Array(cipherText.length).fill('.');
+    }
+
+    let rail = 0;
+    let direction = 'down';
+    for (let i = 0; i < cipherText.length; i++) {
+        fence[rail][i] = '*';
+        if (rail === 0) {
+            direction = 'down';
+        } else if (rail === rails - 1) {
+            direction = 'up';
+        }
+        direction === 'down' ? rail++ : rail--;
+    }
+
+    let index = 0;
+    for (let i = 0; i < rails; i++) {
+        for (let j = 0; j < cipherText.length; j++) {
+            if (fence[i][j] === '*' && index < cipherText.length) {
+                fence[i][j] = cipherText[index++];
+            }
+        }
+    }
+
+    let plainText = '';
+    rail = 0;
+    direction = 'down';
+    for (let i = 0; i < cipherText.length; i++) {
+        plainText += fence[rail][i];
+        if (rail === 0) {
+            direction = 'down';
+        } else if (rail === rails - 1) {
+            direction = 'up';
+        }
+        direction === 'down' ? rail++ : rail--;
+    }
+
+    return plainText;
+}
+
+function jiami(){
+    let a,b,m;
+    m =  document.getElementById("m").value;
+    a = document.querySelector("#before").value;
+    b = railFenceEncrypt(a,m);
+    document.querySelector("#after").value = b;
+}
+function jiemi(){
+    let a,b,m;
+    m = document.getElementById("m").value;
+    b = document.querySelector("#after").value;
+    a = railFenceDecrypt(b,m);
+    document.querySelector("#before").value = a;
+}
+
+</script>
+
+</body>
+
+</html>
