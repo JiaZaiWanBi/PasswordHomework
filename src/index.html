@@ -35,13 +35,11 @@
 
 <nav>
     <ul>
-        <li id="nav1" onclick="changeIframe('iframe1')">棋盘</li>
-        <li id="nav2" onclick="changeIframe('iframe2')">栏棚</li>
-        <li id="nav3" onclick="changeIframe('iframe3')">凯撒</li>
+        <li id="nav1" onclick="changeIframe('iframe1')">RSA</li>
     </ul>
 </nav>
 
-<iframe id="iframe" src="qipan.html" frameborder="0"></iframe>
+<iframe id="iframe" src="RSA.html" frameborder="0"></iframe>
 
 <script>
 
@@ -51,16 +49,8 @@ setActiveNav("nav1")
         var iframeSrc = '';
         switch (iframeId) {
             case 'iframe1':
-                iframeSrc = 'qipan.html';
+                iframeSrc = 'RSA.html';
                 setActiveNav('nav1');
-                break;
-            case 'iframe2':
-                iframeSrc = 'lanpeng.html';
-                setActiveNav('nav2');
-                break;
-            case 'iframe3':
-                iframeSrc = 'kaisa.html';
-                setActiveNav('nav3');
                 break;
         }
         document.getElementById("iframe").src = iframeSrc;

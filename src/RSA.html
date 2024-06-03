@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RSA</title>
+    <style>
+        /* 样式化输入框 */
+        .rounded-input {
+            border: 2px solid #ccc; /* 边框 */
+            border-radius: 10px; /* 圆角 */
+            padding: 10px; /* 内边距 */
+            font-size: 16px; /* 字体大小 */
+            outline: none; /* 删除默认的轮廓样式 */
+        }
+
+        /* 鼠标悬停时改变输入框颜色 */
+        .rounded-input:hover {
+            border-color: #aaa;
+        }
+
+        /* 聚焦时改变输入框颜色 */
+        .rounded-input:focus {
+            border-color: #007bff;
+        }
+
+        /* 共同的容器样式 */
+        .container {
+            display: flex;
+            flex-direction: row; /* 将子元素在水平方向上排列 */
+            flex-direction: column;
+            align-items: center;
+            margin-top: 20px;
+            margin-bottom: 10px;
+        }
+        .midarea {
+            display: flex;
+            padding-left: 10%;
+        }
+
+        /* 输入框样式 */
+        textarea {
+            width: 800px;
+            height: 200px;
+            margin-bottom: 20px;
+            resize: none;
+            border: 1px solid #ccc;
+            padding: 10px;
+            font-size: 16px;
+            box-sizing: border-box; /* 让 padding 不会撑大输入框 */
+        }
+
+        /* 按钮样式 */
+        button {
+            padding: 10px 20px;
+            font-size: 16px;
+            background-color: #007bff;
+            color: #fff;
+            border-radius: 20px; /* 设置圆角 */
+            padding: 10px 20px; /* 增加内边距 */
+            cursor: pointer;
+            transition: background-color 0.3s;
+            margin-right: 10px; /* 设置按钮之间的右边距 */
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <textarea id="before"></textarea>
+    <div class="midarea">
+    <input id="p" class="rounded-input" placeholder="请输入p">
+    <input id="q" class="rounded-input" placeholder="请输入q">
+    <input id="e" class="rounded-input" placeholder="请输入e" style="width: 10%;">
+    <button id="jiami" style="display: inline-block;" onclick="jiami()">👇加密</button>
+    <button id="jiemi" style="display: inline-block;" onclick="jiemi()">👆解密</button>
+    </div>
+    <textarea id="after"></textarea>
+</div>
+<script>
+
+function modExp(base, exp, mod) {
+    if (mod === 1) return 0;
+    let result = 1;
+    base = base % mod;
+    while (exp > 0) {
+        if (exp % 2 === 1) // If exp is odd, multiply base with result
+            result = (result * base) % mod;
+        exp = exp >> 1; // Right shift exp by 1
+        base = (base * base) % mod; // Square the base
+    }
+    return result;
+}
+
+// Function to calculate GCD of two numbers
+function gcd(a, b) {
+    if (b === 0) return a;
+    return gcd(b, a % b);
+}
+
+function modInverse(e, phi) {
+    let m0 = phi, t, q;
+    let x0 = 0, x1 = 1;
+    if (phi === 1) return 0;
+    while (e > 1) {
+        // q is quotient
+        q = Math.floor(e / phi);
+        t = phi;
+        phi = e % phi; 
+        e = t;
+        t = x0;
+        x0 = x1 - q * x0;
+        x1 = t;
+    }
+    if (x1 < 0) x1 += m0;
+    return x1;
+}
+
+function generateKeys(p, q, e) {
+    const n = p * q;
+    const nn = (p - 1) * (q - 1);
+    if (gcd(e, nn) !== 1) {
+        alert('e 和 φ(n) 必须互质');
+    }
+    const d = modInverse(e, nn);
+    return { publicKey: { e, n }, privateKey: { d, n } };
+}
+
+function encrypt(message, publicKey) {
+    const { e, n } = publicKey;
+    return modExp(message, e, n);
+}
+
+// RSA decryption
+function decrypt(ciphertext, privateKey) {
+    const { d, n } = privateKey;
+    return modExp(ciphertext, d, n);
+}
+
+function jiami(){
+    const p = parseInt(document.getElementById('p').value);
+    const q = parseInt(document.getElementById('q').value);
+    const e = parseInt(document.getElementById('e').value);
+    const msg = parseInt(document.getElementById('before').value);
+    const keys = generateKeys(p,q,e);
+    document.querySelector("#after").value = encrypt(msg,keys.publicKey);
+}
+function jiemi(){
+    const p = parseInt(document.getElementById('p').value);
+    const q = parseInt(document.getElementById('q').value);
+    const e = parseInt(document.getElementById('e').value);
+    const msg = parseInt(document.getElementById('after').value);
+    const keys = generateKeys(p,q,e);
+    document.querySelector("#before").value = decrypt(msg,keys.privateKey);
+}
+
+</script>
+
+</body>
+
+</html>
